@@ -32,7 +32,7 @@ pip3 install --upgrade -r composer_requirements.txt
 pip3 check
 
 # We have no control on the Dockerfile, so the patch code has to be included in this entrypoint.sh file
-read -r -d '' << EOL
+read -r -d '' PATCH << EOL
 --- /opt/python3.8/lib/python3.8/site-packages/dbt/include/global_project/macros/adapters/columns.sql
 +++ /opt/python3.8/lib/python3.8/site-packages/dbt/include/global_project/macros/adapters/columns.sql
 @@ -114,11 +114,11 @@
