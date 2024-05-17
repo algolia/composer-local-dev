@@ -51,7 +51,9 @@ read -r -d '' PATCH << EOL
    {%- endset -%}
 EOL
 
-cd / && patch -p0 <<< "$PATCH"
+# cd / && patch -p0 <<< "$PATCH"
+cd /
+echo "$PATCH" |patch -p0
 
 export PATH="$PATH:/home/airflow/docker_files/bin"
 
