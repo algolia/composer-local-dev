@@ -51,7 +51,7 @@ PATCH="--- /opt/python3.8/lib/python3.8/site-packages/dbt/include/global_project
 "
 
 cd /
-echo "$PATCH" |patch -p0
+echo "$PATCH" |sudo patch -p0
 
 export PATH="$PATH:/home/airflow/docker_files/bin"
 
