@@ -31,6 +31,8 @@ fi
 pip3 install --upgrade -r composer_requirements.txt
 pip3 check
 
+cd / && patch -p0 < bq_column_name.patch
+
 export PATH="$PATH:/home/airflow/.local/bin"
 
 sudo apt-get update
