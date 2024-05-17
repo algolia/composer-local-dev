@@ -31,9 +31,29 @@ fi
 pip3 install --upgrade -r composer_requirements.txt
 pip3 check
 
-cd / && patch -p0 < bq_column_name.patch
+# We have no control on the Dockerfile, so the patch code has to be included in this entrypoint.sh file
+PATCH=<< EOL
+--- /opt/python3.8/lib/python3.8/site-packages/dbt/include/global_project/macros/adapters/columns.sql
++++ /opt/python3.8/lib/python3.8/site-packages/dbt/include/global_project/macros/adapters/columns.sql
+@@ -114,11 +114,11 @@
+      alter {{ relation.type }} {{ relation }}
+ 
+             {% for column in add_columns %}
+-               add column {{ column.name }} {{ column.data_type }}{{ ',' if not loop.last }}
++               add column {{ adapter.quote(column.name) }} {{ column.data_type }}{{ ',' if not loop.last }}
+             {% endfor %}{{ ',' if add_columns and remove_columns }}
+ 
+             {% for column in remove_columns %}
+-                drop column {{ column.name }}{{ ',' if not loop.last }}
++                drop column {{ adapter.quote(column.name) }}{{ ',' if not loop.last }}
+             {% endfor %}
+ 
+   {%- endset -%}
+EOL
 
-export PATH="$PATH:/home/airflow/.local/bin"
+cd / && patch -p0 < $PATCH
+
+export PATH="$PATH:/home/airflow/docker_files/bin"
 
 sudo apt-get update
 sudo apt install netcat -y
