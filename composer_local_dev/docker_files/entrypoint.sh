@@ -63,6 +63,8 @@ echo "Acessing the SSH port"
 nc -z -v -w5 host.docker.internal 22 || echo "SSH failed"
 echo "Acessing the MySQL port"
 nc -z -v -w5 host.docker.internal 3306 || echo "MySQL failed"
+echo "Acessing the MLFlow port"
+nc -z -v -w5 host.docker.internal 5000 || echo "MLFlow failed"
 
 airflow db init
 
