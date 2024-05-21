@@ -30,7 +30,7 @@ dependencies = [
     "google-cloud-artifact-registry>=1.2.0",
     "rich_click==1.4.0",
     "docker==6.*",
-    "requests<=2.32.0"
+    "requests<2.32.0"
 ]
 extras = {
     "tests": ["pytest", "nox", "coverage"],
