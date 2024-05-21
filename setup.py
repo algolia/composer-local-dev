@@ -30,6 +30,7 @@ dependencies = [
     "google-cloud-artifact-registry>=1.2.0",
     "rich_click==1.4.0",
     "docker==6.*",
+    "requests<=2.32.0"
 ]
 extras = {
     "tests": ["pytest", "nox", "coverage"],
@@ -60,7 +61,7 @@ setuptools.setup(
     description=description,
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author="Google LLC", 
+    author="Google LLC",
     author_email="no-reply@google.com",
     license="Apache 2.0",
     url='https://github.com/GoogleCloudPlatform/composer-local-dev',
