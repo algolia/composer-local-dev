@@ -33,8 +33,9 @@ init_airflow() {
   pip3 install --upgrade -r composer_requirements.txt
   pip3 check
 
-  # We have no control on the Dockerfile, so the patch code has to be included in this entrypoint.sh file
-PATCH="--- /opt/python3.8/lib/python3.8/site-packages/dbt/include/global_project/macros/adapters/columns.sql
+# Patch DBT
+# We have no control on the Dockerfile, so the patch code has to be included in this entrypoint.sh file
+PATCH_1_5="--- /opt/python3.8/lib/python3.8/site-packages/dbt/include/global_project/macros/adapters/columns.sql
 +++ /opt/python3.8/lib/python3.8/site-packages/dbt/include/global_project/macros/adapters/columns.sql
 @@ -114,11 +114,11 @@
       alter {{ relation.type }} {{ relation }}
@@ -52,8 +53,45 @@ PATCH="--- /opt/python3.8/lib/python3.8/site-packages/dbt/include/global_project
    {%- endset -%}
 "
 
+PATCH_1_8="--- /opt/python3.11/lib/python3.11/site-packages/dbt/include/bigquery/macros/adapters.sql
++++ /opt/python3.11/lib/python3.11/site-packages/dbt/include/bigquery/macros/adapters.sql
+@@ -112,7 +112,7 @@
+
+      alter {{ relation.type }} {{ relation }}
+         {% for column in add_columns %}
+-          add column {{ column.name }} {{ column.data_type }}{{ ',' if not loop.last }}
++          add column {{ adapter.quote(column.name) }} {{ column.data_type }}{{ ',' if not loop.last }}
+         {% endfor %}
+
+   {%- endset -%}
+@@ -128,7 +128,7 @@
+      alter {{ relation.type }} {{ relation }}
+
+         {% for column in drop_columns %}
+-          drop column {{ column.name }}{{ ',' if not loop.last }}
++          drop column {{ adapter.quote(column.name) }}{{ ',' if not loop.last }}
+         {% endfor %}
+
+   {%- endset -%}
+"
+
 cd /
-echo "$PATCH" |sudo patch -p0
+if test "${MAJOR_VERSION+x}"
+then 
+  echo "MAJOR_VERSION is: $MAJOR_VERSION"
+  if [ "$MAJOR_VERSION" = "2.6.3" ]
+    then
+      echo "$PATCH_1_5" |sudo patch -p0
+
+  elif [ "$MAJOR_VERSION" = "2.9.3" ]
+    then
+      echo "$PATCH_1_8" |sudo patch -p0
+  else
+    echo "WARNING:UNSUPPORTED MAJOR_VERSION $MAJOR_VERSION"
+  fi
+  else
+  echo "WARNING: MAJOR_VERSION is not set"
+fi
 
 export PATH="$PATH:/home/airflow/docker_files/bin"
 
