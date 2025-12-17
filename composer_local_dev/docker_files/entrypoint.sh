@@ -31,9 +31,19 @@ init_airflow() {
       $run_as_user /var/local/setup_python_command.sh
   fi
 
-  sudo pip3 install --upgrade -r composer_requirements.txt
-  sudo pip3 check
+  $run_as_user echo "Installing uv..."
 
+  wget -qO- https://astral.sh/uv/install.sh | env UV_NO_MODIFY_PATH=1 UV_DISABLE_UPDATE=1 sh
+
+  sudo /home/airflow/.local/bin/uv pip uninstall --system \
+  google-cloud-datacatalog-lineage \
+  google-cloud-datacatalog-lineage-producer-client
+  # avoid conflicts with  google-cloud-datacatalog-lineage-producer-client 
+  # and don't update apache-airflow==2.10.5+composer version
+  sudo /home/airflow/.local/bin/uv pip install --system -r composer_requirements.txt \
+                                                         -c constraints.txt \
+                                                         --excludes excludes.txt
+  
   airflow_version=$(${run_as_user} airflow version | grep -o "^[0-9\.]*")
 
   original_ifs="$IFS"

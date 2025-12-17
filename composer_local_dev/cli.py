@@ -32,7 +32,7 @@ COMMON_OPTIONS = {
 }
 click.rich_click.USE_RICH_MARKUP = True
 click.rich_click.USE_MARKDOWN = True
-click.rich_click.MAX_WIDTH = 130
+click.rich_click.MAX_WIDTH = 300
 click.rich_click.STYLE_HELPTEXT = ""
 click.rich_click.OPTION_GROUPS = {
     "composer-dev create": [

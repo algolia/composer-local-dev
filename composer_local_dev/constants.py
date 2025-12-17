@@ -247,7 +247,7 @@ DOCKER_NOT_AVAILABLE_ERROR = (
     "Docker not available or failed to start. Please ensure docker service "
     "is installed and running. Error: {error}"
 )
-DOCKER_CONTAINER_MEMORY_LIMIT = "4g"
+DOCKER_CONTAINER_MEMORY_LIMIT = "6g"
 NOT_MODIFIABLE_ENVIRONMENT_VARIABLES = {
     "AIRFLOW_HOME",
 }
