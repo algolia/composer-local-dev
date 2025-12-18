@@ -35,11 +35,14 @@ init_airflow() {
 
   wget -qO- https://astral.sh/uv/install.sh | env UV_NO_MODIFY_PATH=1 UV_DISABLE_UPDATE=1 sh
 
+  # avoid conflicts with google-cloud-datacatalog-lineage-producer-client (incompatible with protobuf >=6.0)
+  # and lock apache-airflow==2.10.5+composer google version
   sudo /home/airflow/.local/bin/uv pip uninstall --system \
   google-cloud-datacatalog-lineage \
   google-cloud-datacatalog-lineage-producer-client
-  # avoid conflicts with  google-cloud-datacatalog-lineage-producer-client 
-  # and don't update apache-airflow==2.10.5+composer version
+  echo "apache-airflow==2.10.5+composer" >> constraints.txt
+  echo "google-cloud-datacatalog-lineage-producer-client" >> excludes.txt
+
   sudo /home/airflow/.local/bin/uv pip install --system -r composer_requirements.txt \
                                                          -c constraints.txt \
                                                          --excludes excludes.txt
