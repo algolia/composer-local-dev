@@ -92,7 +92,7 @@ def get_image_mounts(
      - database_mounts which contains the path for database mounts
     """
     mount_paths = {
-        requirements: "composer_requirements.txt"
+        requirements: "composer_requirements.txt",
         dags_path: "gcs/dags/",
         plugins_path: "gcs/plugins/",
         env_path / "data": "gcs/data/",
@@ -847,7 +847,7 @@ class Environment:
         mounts = get_image_mounts_db(
             db_mounts,
         )
-        
+
         db_vars = db_extras["env_vars"]
         db_ports = db_extras["ports"]
         memory_limit = constants.DOCKER_CONTAINER_MEMORY_LIMIT
