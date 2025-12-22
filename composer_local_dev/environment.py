@@ -44,6 +44,34 @@ def timeout_occurred(start_time):
     return time.time() - start_time >= constants.OPERATION_TIMEOUT_SECONDS
 
 
+def get_image_mounts_db(
+    database_mounts: Dict[pathlib.Path, str]
+) -> List[docker.types.Mount]:
+    """
+    Return list of docker volumes to be mounted inside database container.
+    Following paths are mounted:
+     - database_mounts which contains the path for database mounts
+    """
+    mount_paths = {
+        **database_mounts,
+    }
+
+    return [
+        docker.types.Mount(
+            source=str(source),
+            # If target is absolute path, use it as is.
+            # Otherwise, prepend AIRFLOW_HOME to the target.
+            target=(
+                target
+                if target.startswith("/")
+                else f"{constants.AIRFLOW_HOME}/{target}"
+            ),
+            type="bind",
+        )
+        for source, target in mount_paths.items()
+    ]
+
+
 def get_image_mounts(
     env_path: pathlib.Path,
     dags_path: str,
@@ -64,18 +92,14 @@ def get_image_mounts(
      - database_mounts which contains the path for database mounts
     """
     mount_paths = {
+        requirements: "composer_requirements.txt"
         dags_path: "gcs/dags/",
         plugins_path: "gcs/plugins/",
         env_path / "data": "gcs/data/",
         gcloud_config_path: ".config/gcloud",
         **database_mounts,
-        **(
-            {requirements: "composer_requirements.txt"}
-            if requirements is not None
-            else {}
-        ),
     }
-    
+
     # Add kube_config_path only if it's provided
     if kube_config_path:
         mount_paths[kube_config_path] = ".kube/"
@@ -820,15 +844,10 @@ class Environment:
             **grouped_db_mounts["files"],
             **grouped_db_mounts["folders"],
         }
-        mounts = get_image_mounts(
-            self.env_dir_path,
-            self.dags_path,
-            self.plugins_path,
-            utils.resolve_gcloud_config_path(),
-            utils.resolve_kube_config_path(),
-            None, # No requirements for DB container
+        mounts = get_image_mounts_db(
             db_mounts,
         )
+        
         db_vars = db_extras["env_vars"]
         db_ports = db_extras["ports"]
         memory_limit = constants.DOCKER_CONTAINER_MEMORY_LIMIT
