@@ -45,7 +45,10 @@ def timeout_occurred(start_time):
 
 
 def get_image_mounts_db(
-    database_mounts: Dict[pathlib.Path, str]
+    database_mounts: Dict[pathlib.Path, str],
+    env_path: pathlib.Path,
+    plugins_path: str,
+    dags_path: str,
 ) -> List[docker.types.Mount]:
     """
     Return list of docker volumes to be mounted inside database container.
@@ -53,6 +56,9 @@ def get_image_mounts_db(
      - database_mounts which contains the path for database mounts
     """
     mount_paths = {
+        dags_path: "gcs/dags/",
+        plugins_path: "gcs/plugins/",
+        env_path / "data": "gcs/data/",
         **database_mounts,
     }
 
@@ -846,6 +852,9 @@ class Environment:
         }
         mounts = get_image_mounts_db(
             db_mounts,
+            self.env_dir_path,
+            self.plugins_path,
+            self.dags_path,
         )
 
         db_vars = db_extras["env_vars"]
