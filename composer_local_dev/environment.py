@@ -64,13 +64,18 @@ def get_image_mounts(
      - database_mounts which contains the path for database mounts
     """
     mount_paths = {
-        requirements: "composer_requirements.txt" if requirements is not None else "",
         dags_path: "gcs/dags/",
         plugins_path: "gcs/plugins/",
         env_path / "data": "gcs/data/",
         gcloud_config_path: ".config/gcloud",
         **database_mounts,
+        **(
+            {requirements: "composer_requirements.txt"}
+            if requirements is not None
+            else {}
+        ),
     }
+    
     # Add kube_config_path only if it's provided
     if kube_config_path:
         mount_paths[kube_config_path] = ".kube/"
