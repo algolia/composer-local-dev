@@ -64,7 +64,7 @@ def get_image_mounts(
      - database_mounts which contains the path for database mounts
     """
     mount_paths = {
-        requirements: "composer_requirements.txt",
+        requirements: "composer_requirements.txt" if requirements is not None else "",
         dags_path: "gcs/dags/",
         plugins_path: "gcs/plugins/",
         env_path / "data": "gcs/data/",
@@ -821,7 +821,7 @@ class Environment:
             self.plugins_path,
             utils.resolve_gcloud_config_path(),
             utils.resolve_kube_config_path(),
-            self.requirements_file,
+            None, # No requirements for DB container
             db_mounts,
         )
         db_vars = db_extras["env_vars"]
