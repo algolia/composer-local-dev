@@ -32,7 +32,12 @@ dependencies = [
     "rich_click==1.4.0",
 ]
 extras = {
-    "tests": ["pytest", "nox", "coverage"],
+    "tests": [
+        "pytest",
+        "nox",
+        "coverage",
+        "virtualenv>=20.26.6",
+    ],
     "docs": [
         "sphinx",
         "sphinx-tabs==3.3.1",
@@ -40,6 +45,7 @@ extras = {
     ],
     "dev": [
         "pre-commit",
+        "virtualenv>=20.26.6",
     ],
 }
 
